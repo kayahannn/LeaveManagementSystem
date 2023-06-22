@@ -1,15 +1,11 @@
-kayahan, kayahan@abv,bg, 90123, 121212, 131313, paid
-havin, havin@asad.asd, 12313123, 1212312, 123213, paid
-gonul, gonu@asd.asd, 12312312, 123, 123, paid
-shukri, shukri@abv.bg, 123123, 123, 123, paid
-gonul,azsum@abv,1231243,123123,123123,not,
-gonul, blabla@asd, 123123, 123123, 123123, paid, 
-kayahan, asd@minor, 123142132, 123123, 123123, no, 0
-gonul, asds@asdsad.cp, 13221321, 123213, 123213, no, 1
-shukri, shukri@bebe.com, 912312321, 12312321, 12321321, paid, 0
-kayahan,kayahan@abv,123213,123123,123213,yes,1,Pending
-kayahan,kayahan@adas,123123,123213,213213,yes,1,Pending
-kayahan,as,123,123,123,no,123,Pending
-kayahan,asdasdas,123,123,123,no,123,Pending
-kayahan,kayahan@abv,901231,123,123,1,123,Pending
 kayahan,kayahan@abv,1234567890,1231232,12312321,yes,123,Pending
+kayahan,kayahan@abv,1234567890,1231232,12312321,yes,123,Pending
+asdsa,aadas2a@asdasd,1231231231,123,123123,yes,123,Pending
+kayahan,kayahan@abv.bg,9012123112,asd123,adsa123,yes,1,Pending
+ivan,ivan@ab.bg,1212121212,131313,121212,yes,2,Pending
+sali,ali@abv.bg,1212121212,131313,141414,no,3,Pending
+emo,emo@git.co,1231231231,123123,123123,yes,1,Pending
+kayahan,kayahan@abv.bg,1231231231,12312312,12321321,yes,3,Pending
+kayahan,kayahan@asd.asd,1231231231,123213,1232132,no,3,Pending
+kayahan,kayahan@asdasd.asda,1234123412,123123,12321321,no,3,Pending
+sali,sali@as.asd,1231231231,123213,21312321,no,3,Pending

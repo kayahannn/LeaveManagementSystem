@@ -7,6 +7,8 @@ import java.util.regex.Pattern;
 // Press Shift twice to open the Search Everywhere dialog and type `show whitespaces`,
 // then press Enter. You can now see whitespace characters in your code.
 public class Main {
+
+    //validating email address
     private static final String EMAIL_REGEX = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
     private static final Pattern EMAIL_PATTERN = Pattern.compile(EMAIL_REGEX);
 
@@ -15,6 +17,7 @@ public class Main {
         return matcher.matches();
     }
 
+    // validating ENG, 10 digit
     private static final String NUMBER_REGEX = "\\d{10}";
     private static final Pattern NUMBER_PATTERN = Pattern.compile(NUMBER_REGEX);
 
@@ -23,28 +26,43 @@ public class Main {
         return matcher.matches();
     }
 
-    public static void writeToFile(ArrayList userInfo, int uniNumber) throws IOException {
+    public static void writeToFile(ArrayList userInfo) throws IOException {
         FileWriter fileWriter = new FileWriter("DB_Leave_request.txt", true);
+        FileWriter fileWriterUid = new FileWriter("UniqueID.txt");
         BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
+        BufferedWriter bufferedWriter1 = new BufferedWriter(fileWriterUid);
         bufferedWriter.newLine();
         for (int i = 0; i < userInfo.size(); i++) {
             bufferedWriter.write(userInfo.get(i).toString() + ",");
         }
-        bufferedWriter.write(String.valueOf(uniNumber) + ",");
+        bufferedWriter.write(String.valueOf(nextId()) + ",");
         bufferedWriter.write("Pending");
         bufferedWriter.close();
+        bufferedWriter1.write(String.valueOf(nextId()));
+        bufferedWriter1.close();
     }
 
-    public static int generateUniNumber() {
-        int uniNumber = 123;
+    //Generate ID
 
-        return uniNumber;
+    public static synchronized int nextId() throws IOException {
+        int counter = getLastUniqueID();
+        return ++counter;
     }
 
-    public static ArrayList<String[]> readFromFile(BufferedReader buffer) throws IOException {
+    public static int getLastUniqueID() throws IOException {
+        File file = new File("UniqueID.txt");
+        Scanner input = new Scanner(file);
+        String line;
+        while (input.hasNext()) {
+            line = input.next();
+        }
+        return Integer.parseInt(line);
+    }
+
+    public static ArrayList<String[]> readFromFile(BufferedReader bufferedReader) throws IOException {
         ArrayList<String[]> arrayList = new ArrayList<>();
         String line;
-        while ((line = buffer.readLine()) != null) {
+        while ((line = bufferedReader.readLine()) != null) {
             String[] getData = line.split("[,]+");
             arrayList.add(getData);
         }
@@ -52,15 +70,16 @@ public class Main {
     }
 
     public static void print(ArrayList<String[]> arrayList) {
-        System.out.printf("|%-10s|%-20s|%-12s|%-8s|%n", "Name", "E-mail", "Start Date", "End Date");
+        System.out.printf("|%-10s|%-10s|%-10s|%-20s|%-12s|%-12s|%-12s|%-12s|%-8s|%n",
+                "UniNumber", "Name", "Surname", "E-mail", "EGN", "Start Date", "End Date", "Leave Type", "Status");
         for (int i = 0; i < arrayList.size(); i++) {
             String[] row = arrayList.get(i);
-            System.out.printf("|%-10s|%-20s|%-12s|%-8s|%n", row[0], row[1], row[2], row[3]);
+            System.out.printf("|%-10s|%-10s|%-10s|%-20s|%-12s|%-12s|%-12s|%-12s|%-8s|%n", row[6], row[0], row[0], row[1], row[2], row[3], row[4], row[5], row[7]);
         }
     }
 
-    public static BufferedReader readFile() throws IOException {
-        FileReader fileReader = new FileReader("DB_Leave_request.txt");
+    public static BufferedReader readFile(String fileName) throws IOException {
+        FileReader fileReader = new FileReader(fileName);
         BufferedReader bufferedReader = new BufferedReader(fileReader);
         return bufferedReader;
     }
@@ -118,7 +137,7 @@ public class Main {
                     inputData.add(leaveType);
                     System.out.println(inputData);
                     try {
-                        writeToFile(inputData, generateUniNumber());
+                        writeToFile(inputData);
                     } catch (IOException ex) {
                         System.out.println(ex);
                     }
@@ -128,7 +147,7 @@ public class Main {
                     //task2
                     //Print all Leave requests;
                     try {
-                        print(readFromFile(readFile()));
+                        print(readFromFile(readFile("DB_Leave_request.txt")));
                     } catch (IOException ex) {
                         System.out.println(ex);
                     }
@@ -139,7 +158,7 @@ public class Main {
                     System.out.printf("Enter Name: ");
                     name = input.next();
                     try {
-                        print(getLeaveRecordsByName(name, readFile()));
+                        print(getLeaveRecordsByName(name, readFile("DB_Leave_request.txt")));
                     } catch (IOException ex) {
                     }
                     break;
