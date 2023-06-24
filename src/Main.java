@@ -1,5 +1,9 @@
 import java.io.*;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -9,7 +13,7 @@ import java.util.regex.Pattern;
 public class Main {
 
     //validating email address
-    private static final String EMAIL_REGEX = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
+    private static final String EMAIL_REGEX = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]+$";
     private static final Pattern EMAIL_PATTERN = Pattern.compile(EMAIL_REGEX);
 
     public static boolean isValidEmail(String email) {
@@ -26,6 +30,17 @@ public class Main {
         return matcher.matches();
     }
 
+    public static boolean isDate(String value, Locale locale) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyy", locale);
+        dateFormat.setLenient(false);
+        try {
+            Date date = dateFormat.parse(value);
+            return true;
+        } catch (ParseException e) {
+            return false;
+        }
+    }
+
     public static void writeToFile(ArrayList userInfo) throws IOException {
         FileWriter fileWriter = new FileWriter("DB_Leave_request.txt", true);
         FileWriter fileWriterUid = new FileWriter("UniqueID.txt");
@@ -35,29 +50,29 @@ public class Main {
         for (int i = 0; i < userInfo.size(); i++) {
             bufferedWriter.write(userInfo.get(i).toString() + ",");
         }
-        bufferedWriter.write(String.valueOf(nextId()) + ",");
+//        bufferedWriter.write(String.valueOf(nextId()) + ",");
         bufferedWriter.write("Pending");
         bufferedWriter.close();
-        bufferedWriter1.write(String.valueOf(nextId()));
+//        bufferedWriter1.write(String.valueOf(nextId()));
         bufferedWriter1.close();
     }
 
     //Generate ID
 
-    public static synchronized int nextId() throws IOException {
-        int counter = getLastUniqueID();
-        return ++counter;
-    }
+//    public static synchronized int nextId() throws IOException {
+//        int counter = getLastUniqueID();
+//        return ++counter;
+//    }
 
-    public static int getLastUniqueID() throws IOException {
-        File file = new File("UniqueID.txt");
-        Scanner input = new Scanner(file);
-        String line;
-        while (input.hasNext()) {
-            line = input.next();
-        }
-        return Integer.parseInt(line);
-    }
+//    public static int getLastUniqueID() throws IOException {
+//        File file = new File("UniqueID.txt");
+//        Scanner input = new Scanner(file);
+//        String line;
+//        while (input.hasNext()) {
+//            line = input.next();
+//        }
+//        return Integer.parseInt(line);
+//    }
 
     public static ArrayList<String[]> readFromFile(BufferedReader bufferedReader) throws IOException {
         ArrayList<String[]> arrayList = new ArrayList<>();
@@ -115,22 +130,27 @@ public class Main {
                     do {
                         System.out.println("Enter email address: ");
                         mail = input.next();
-                        System.out.println("Invalid email address!");
                     }
                     while (!isValidEmail(mail));
                     inputData.add(mail);
                     String egn;
                     do {
-                        System.out.println("Enter your EGN: ");
+                        System.out.println("Enter your EGN : ");
                         egn = input.next();
-
                     } while (!isValidEGN(egn));
                     inputData.add(egn);
-                    System.out.println("Enter start date: ");
-                    String startDate = input.next();
+                    String startDate;
+                    do {
+                        System.out.println("Enter start date (dd.MM.yyyy): ");
+                        startDate = input.next();
+                    }
+                    while (!isDate(startDate, Locale.ENGLISH));
                     inputData.add(startDate);
-                    System.out.println("Enter end date: ");
-                    String endDate = input.next();
+                    String endDate;
+                    do {
+                        System.out.println("Enter end date: ");
+                        endDate = input.next();
+                    } while (isDate(endDate, Locale.ENGLISH));
                     inputData.add(endDate);
                     System.out.println("Enter Leave type:");
                     String leaveType = input.next();

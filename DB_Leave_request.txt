@@ -5,7 +5,3 @@ kayahan,kayahan@abv.bg,9012123112,asd123,adsa123,yes,1,Pending
 ivan,ivan@ab.bg,1212121212,131313,121212,yes,2,Pending
 sali,ali@abv.bg,1212121212,131313,141414,no,3,Pending
 emo,emo@git.co,1231231231,123123,123123,yes,1,Pending
-kayahan,kayahan@abv.bg,1231231231,12312312,12321321,yes,3,Pending
-kayahan,kayahan@asd.asd,1231231231,123213,1232132,no,3,Pending
-kayahan,kayahan@asdasd.asda,1234123412,123123,12321321,no,3,Pending
-sali,sali@as.asd,1231231231,123213,21312321,no,3,Pending
