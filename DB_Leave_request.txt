@@ -1,7 +1,6 @@
-kayahan,kayahan@abv,1234567890,1231232,12312321,yes,123,Pending
-kayahan,kayahan@abv,1234567890,1231232,12312321,yes,123,Pending
-asdsa,aadas2a@asdasd,1231231231,123,123123,yes,123,Pending
-kayahan,kayahan@abv.bg,9012123112,asd123,adsa123,yes,1,Pending
-ivan,ivan@ab.bg,1212121212,131313,121212,yes,2,Pending
-sali,ali@abv.bg,1212121212,131313,141414,no,3,Pending
-emo,emo@git.co,1231231231,123123,123123,yes,1,Pending
+kayahan,kayahan@abv.bg,1111111111,25.06.2023,26.07.2023,paid,Pending
+kayahan,kayahan@abv.bg,9012123123,12.12.12,12.12.12,1,Pending
+kayahan,kayahan@abv.bg,1212121212,12.12.12,12.12.1,1,Pending
+kayahan,kayahan@abv.bg,9012121212,1.1.1,1.1.1,3,Pending
+kayahan,kayahan@abv.bg,1234567890,1.1.1.,1.1.1.,Paid,Pending
+kayahan,kayahan@abv.bg,kayahan@abv.bg,1212121212,11.11.1111,11.11.1111,3,Pending
