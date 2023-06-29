@@ -33,18 +33,8 @@ public class Main {
         return matcher.matches();
     }
 
-//    public static boolean isDate(String value, Locale locale) {
-//        SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyy", locale);
-//        dateFormat.setLenient(false);
-//        try {
-//            Date date = dateFormat.parse(value);
-//            return true;
-//        } catch (ParseException e) {
-//            return false;
-//        }
-//    }
     public static boolean isDate(String value, Locale locale) {
-        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd.MM.yyy", locale);
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy", locale);
         try {
             LocalDate date = LocalDate.parse(value, dateFormatter);
             return true;
@@ -52,6 +42,11 @@ public class Main {
             return false;
         }
     }
+
+    public static boolean isDate2BeforeDate1(LocalDate date1, LocalDate date2) {
+        return date2.isBefore(date1);
+    }
+
     public static void writeToFile(ArrayList userInfo) throws IOException {
         FileWriter fileWriter = new FileWriter("DB_Leave_request.txt", true);
         FileWriter fileWriterUid = new FileWriter("UniqueID.txt");
@@ -68,39 +63,22 @@ public class Main {
         bufferedWriter1.close();
     }
 
-    //Generate ID
-
-//    public static synchronized int nextId() throws IOException {
-//        int counter = getLastUniqueID();
-//        return ++counter;
-//    }
-
-//    public static int getLastUniqueID() throws IOException {
-//        File file = new File("UniqueID.txt");
-//        Scanner input = new Scanner(file);
-//        String line;
-//        while (input.hasNext()) {
-//            line = input.next();
-//        }
-//        return Integer.parseInt(line);
-//    }
-
     public static ArrayList<String[]> readFromFile(BufferedReader bufferedReader) throws IOException {
         ArrayList<String[]> arrayList = new ArrayList<>();
         String line;
         while ((line = bufferedReader.readLine()) != null) {
-            String[] getData = line.split("[,]+");
+            String[] getData = line.split(",");
             arrayList.add(getData);
         }
         return arrayList;
     }
 
     public static void print(ArrayList<String[]> arrayList) {
-        System.out.printf("|%-10s|%-10s|%-10s|%-20s|%-12s|%-12s|%-12s|%-12s|%-8s|%n",
+        System.out.printf("|%-10s|%-10s|%-10s|%-20s|%-12s|%-12s|%-12s|%-10s|%n",
                 "UniNumber", "Name", "Surname", "E-mail", "EGN", "Start Date", "End Date", "Leave Type", "Status");
         for (int i = 0; i < arrayList.size(); i++) {
             String[] row = arrayList.get(i);
-            System.out.printf("|%-10s|%-10s|%-10s|%-20s|%-12s|%-12s|%-12s|%-12s|%-8s|%n", row[6], row[0], row[0], row[1], row[2], row[3], row[4], row[5], row[7]);
+            System.out.printf("|%-10s|%-10s|%-10s|%-20s|%-12s|%-12s|%-12s|%-10s|%n", row[6], row[0], row[1], row[2], row[3], row[4], row[5], row[7]);
         }
     }
 
@@ -123,10 +101,11 @@ public class Main {
     }
 
     public static String getLeaveType(Scanner input) {
-        String leaveType;
+
         System.out.println("Enter Leave type");
         System.out.println("1: Paid");
         System.out.println("2: Unpaid");
+        String leaveType;
         leaveType = input.next();
         if (leaveType.equalsIgnoreCase("1")) {
             leaveType = "Paid";
@@ -134,7 +113,7 @@ public class Main {
             leaveType = "Unpaid";
         } else {
             System.out.println("wrong choice!");
-            getLeaveType(input);
+            leaveType = getLeaveType(input);
         }
         return leaveType;
     }
@@ -158,12 +137,12 @@ public class Main {
         return startDate;
     }
 
-    public static String getEndDate(Scanner input) {
+    public static String getEndDate(Scanner input, String startDate) {
         String endDate;
         do {
             System.out.println("Enter end date (dd.MM.yyyy): ");
             endDate = input.next();
-        } while (!isDate(endDate, Locale.ENGLISH));
+        } while (!isDate(endDate, Locale.ENGLISH) && isDate2BeforeDate1(LocalDate.parse(startDate), LocalDate.parse(endDate)));
 
         return endDate;
     }
@@ -178,13 +157,12 @@ public class Main {
         return mail;
     }
 
-    public static void main(String[] args) {
-        Scanner input = new Scanner(System.in);
+    public static void menu(Scanner input) {
         boolean quit = false;
         while (!quit) {
             System.out.println("Menu:\n 1. Заяви отпуск\n 2. Виж всички отпуски\n 3. Виж отпуск за служител\n 4. Промени статус на отпуск\n 5. Изход\n");
             System.out.print("Въведи избор: ");
-            int menu = input.nextInt();
+            byte menu = input.nextByte();
             switch (menu) {
                 case 1:
                     //Verifications need to be added!
@@ -197,11 +175,17 @@ public class Main {
                     System.out.println("Enter your Surname: ");
                     String surName = input.next();
                     inputData.add(surName);
-                    inputData.add(getEmailAddr(input));
-                    inputData.add(getEgn(input));
-                    inputData.add(getStartDate(input));
-                    inputData.add(getEndDate(input));
+//
+//                    inputData.add(getEmailAddr(input));
+//
+//                    inputData.add(getEgn(input));
+//
+//                    String startDate = getStartDate(input);
+//                    inputData.add(startDate);
+//                    inputData.add(getEndDate(input, startDate));
+
                     inputData.add(getLeaveType(input));
+
                     System.out.println(inputData);
                     try {
                         writeToFile(inputData);
@@ -241,5 +225,10 @@ public class Main {
                     System.out.println("Wrong input!");
             }
         }
+    }
+
+    public static void main(String[] args) {
+        Scanner input = new Scanner(System.in);
+        menu(input);
     }
 }
