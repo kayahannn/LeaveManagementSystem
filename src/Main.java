@@ -4,10 +4,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Locale;
-import java.util.Scanner;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -48,7 +45,7 @@ public class Main {
     }
 
     public static void writeToFile(ArrayList userInfo) throws IOException {
-        FileWriter fileWriter = new FileWriter("DB_Leave_request.txt", true);
+        FileWriter fileWriter = new FileWriter("DB_Leave_request.csv", true);
         FileWriter fileWriterUid = new FileWriter("UniqueID.txt");
         BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
         BufferedWriter bufferedWriter1 = new BufferedWriter(fileWriterUid);
@@ -157,78 +154,89 @@ public class Main {
         return mail;
     }
 
-    public static void menu(Scanner input) {
+    public static void approveLeave(Scanner input) {
+
+
+    }
+
+    public static void printMenu(Scanner input) {
         boolean quit = false;
         while (!quit) {
             System.out.println("Menu:\n 1. Заяви отпуск\n 2. Виж всички отпуски\n 3. Виж отпуск за служител\n 4. Промени статус на отпуск\n 5. Изход\n");
             System.out.print("Въведи избор: ");
-            byte menu = input.nextByte();
-            switch (menu) {
-                case 1:
-                    //Verifications need to be added!
-                    //UID for each request;
-                    //task1
-                    ArrayList<String> inputData = new ArrayList<>();
-                    System.out.println("Enter your Name: ");
-                    String name = input.next();
-                    inputData.add(name);
-                    System.out.println("Enter your Surname: ");
-                    String surName = input.next();
-                    inputData.add(surName);
-//
-//                    inputData.add(getEmailAddr(input));
-//
-//                    inputData.add(getEgn(input));
-//
-//                    String startDate = getStartDate(input);
-//                    inputData.add(startDate);
-//                    inputData.add(getEndDate(input, startDate));
+            try {
+                byte menu = input.nextByte();
+                switch (menu) {
+                    case 1:
+                        //Verifications need to be added!
+                        //UID for each request;
+                        //task1
+                        ArrayList<String> inputData = new ArrayList<>();
+                        System.out.println("Enter your Name: ");
+                        String name = input.next();
+                        inputData.add(name);
+                        System.out.println("Enter your Surname: ");
+                        String surName = input.next();
+                        inputData.add(surName);
 
-                    inputData.add(getLeaveType(input));
+                        inputData.add(getEmailAddr(input));
 
-                    System.out.println(inputData);
-                    try {
-                        writeToFile(inputData);
-                    } catch (IOException ex) {
-                        System.out.println(ex);
-                    }
-                    break;
-                case 2:
-                    //task2
-                    //Print all Leave requests;
-                    try {
-                        print(readFromFile(readFile("DB_Leave_request.txt")));
-                    } catch (IOException ex) {
-                        System.out.println(ex);
-                    }
-                    break;
-                case 3:
-                    //task3
-                    //Print requests by Name;
-                    System.out.printf("Enter Name: ");
-                    name = input.next();
-                    try {
-                        print(getLeaveRecordsByName(name, readFile("DB_Leave_request.txt")));
-                    } catch (IOException ex) {
-                    }
-                    break;
-                case 4:
-                    //task4
-                    //Change status of Leave request by UID;
-                    //
-                    break;
-                case 6:
-                    quit = true;
-                    System.out.println("Thanks for using me!");
-                    break;
-                default:
-                    System.out.println("Wrong input!");
+                        inputData.add(getEgn(input));
+
+                        String startDate = getStartDate(input);
+                        inputData.add(startDate);
+                        inputData.add(getEndDate(input, startDate));
+
+                        inputData.add(getLeaveType(input));
+
+                        System.out.println(inputData);
+                        try {
+                            writeToFile(inputData);
+                        } catch (IOException ex) {
+                            System.out.println(ex);
+                        }
+                        break;
+                    case 2:
+                        //task2
+                        //Print all Leave requests;
+                        try {
+                            print(readFromFile(readFile("DB_Leave_request.csv")));
+                        } catch (IOException ex) {
+                            System.out.println(ex);
+                        }
+                        break;
+                    case 3:
+                        //task3
+                        //Print requests by Name;
+                        System.out.printf("Enter Name: ");
+                        name = input.next();
+                        try {
+                            print(getLeaveRecordsByName(name, readFile("DB_Leave_request.csv")));
+                        } catch (IOException ex) {
+                        }
+                        break;
+                    case 4:
+                        //task4
+                        //Change status of Leave request by UID;
+                        System.out.println("Enter name: ");
+
+                        break;
+                    case 6:
+                        quit = true;
+                        System.out.println("Thanks for using me!");
+                        break;
+                    default:
+                        System.out.println("Wrong input!");
+                }
+            } catch (InputMismatchException e) {
+                System.out.println("Invalid Input! Please enter number. \n");
+                input.nextLine();
             }
         }
     }
 
     public static void main(String[] args) {
         Scanner input = new Scanner(System.in);
-        menu(input);
+        printMenu(input);
     }
 }

@@ -1,8 +1,0 @@
-
-kayahan,shukriev,kayahan@bv.bg,1212121212,12.12.1212,12.12.1212,Paid,Pending
-kayahan,shukriev,kayahan@abv.bg,1212121212,03.12.1990,03.12.1991,Unpaid,Pending
-kayahan,shukriev,kayahan@abv.bg,1212121212,12.12.1990,11.12.1990,3,Pending
-kayahan,shukriev,kayahan@abv.bg,1212121212,03.12.1990,02.12.1990,3,Pending
-kayahan,1231232ewxx,4,Pending
-kayahan,shukriev,3,Pending
-kayahan,shukriev,Paid,Pending
