@@ -30,9 +30,11 @@ public class Main {
 
     public static boolean isValidDate(String value, Locale locale) {
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy", locale);
+
         try {
             LocalDate date = LocalDate.parse(value, dateFormatter);
             return true;
+
         } catch (DateTimeParseException e) {
             return false;
         }
@@ -43,51 +45,69 @@ public class Main {
         return date2.isAfter(date1);
     }
 
-    public static void writeToFile(ArrayList userInfo) throws IOException {
-        FileWriter fileWriter = new FileWriter("DB_Leave_request.csv", true);
-        BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
-        bufferedWriter.newLine();
-
-        for (int i = 0; i < userInfo.size(); i++) {
-            bufferedWriter.write(userInfo.get(i).toString() + ",");
+    public static void writeToFile(ArrayList<String> userInfo) throws IOException {
+        try (FileWriter fileWriter = new FileWriter("DB_Leave_request.csv", true);
+             BufferedWriter bufferedWriter = new BufferedWriter(fileWriter)) {
+            bufferedWriter.newLine();
+            for (int i = 0; i < userInfo.size(); i++) {
+                bufferedWriter.write(userInfo.get(i) + ",");
+            }
+            bufferedWriter.write("Pending");
         }
-
-        bufferedWriter.write("Pending");
-        bufferedWriter.close();
     }
 
-    public static ArrayList<String[]> readFromFile(BufferedReader bufferedReader) throws IOException {
+    public static ArrayList<String[]> readFileData(BufferedReader bufferedReader) throws IOException {
         ArrayList<String[]> arrayList = new ArrayList<>();
         String line;
-        while ((line = bufferedReader.readLine()) != null) {
-            String[] getData = line.split(",");
-            arrayList.add(getData);
+        try (bufferedReader) {
+            while ((line = bufferedReader.readLine()) != null) {
+                String[] getData = line.split(",");
+                arrayList.add(getData);
+            }
         }
+
         return arrayList;
     }
 
     public static void printTable(ArrayList<String[]> arrayList) {
         System.out.printf("|%-10s|%-10s|%-10s|%-20s|%-12s|%-12s|%-12s|%-10s|%-10s|%n",
                 "Number", "Name", "Surname", "E-mail", "EGN", "Start Date", "End Date", "Leave Type", "Status");
+
         for (int i = 0; i < arrayList.size(); i++) {
             String[] row = arrayList.get(i);
             System.out.printf("|%-10s|%-10s|%-10s|%-20s|%-12s|%-12s|%-12s|%-10s|%-10s|%n", row[6], row[0], row[1], row[2], row[3], row[4], row[5], row[7], row[8]);
         }
     }
 
-    public static BufferedReader readFile(String fileName) throws IOException {
-        FileReader fileReader = new FileReader(fileName);
-        BufferedReader bufferedReader = new BufferedReader(fileReader);
+    //create connection to a file and return buffered reader;
+    public static BufferedReader readFile(String fileName) throws FileNotFoundException {
+        BufferedReader bufferedReader;
+
+        try {
+            FileReader fileReader = new FileReader(fileName);
+            bufferedReader = new BufferedReader(fileReader);
+        } catch (FileNotFoundException e) {
+            throw new FileNotFoundException("File not found: " + fileName);
+        }
+
         return bufferedReader;
     }
 
     public static ArrayList<String[]> getLeaveRecordsByName(String name, BufferedReader bufferedReader) throws IOException {
         ArrayList<String[]> arrayList = new ArrayList<>();
         String line;
-        while ((line = bufferedReader.readLine()) != null) {
-            String[] getData = line.split(",");
-            if (getData[0].equalsIgnoreCase(name)) {
-                arrayList.add(getData);
+        boolean isNameExist = false;
+        try (bufferedReader) {
+            while ((line = bufferedReader.readLine()) != null) {
+                String[] getData = line.split(",");
+
+                if (getData[0].equalsIgnoreCase(name)) {
+                    isNameExist = true;
+                    arrayList.add(getData);
+                }
+            }
+            if (!isNameExist) {
+                System.out.println("Name could not be found!");
             }
         }
         return arrayList;
@@ -114,10 +134,15 @@ public class Main {
 
     public static String inputEgn(Scanner input) {
         String egn;
-
+        boolean isValidEgn;
         do {
             System.out.println("Enter your EGN : ");
             egn = input.next();
+            isValidEgn = isValidEGN(egn);
+
+            if (!isValidEgn) {
+                System.out.println("Wrong input, requires 10 digit!");
+            }
         } while (!isValidEGN(egn));
 
         return egn;
@@ -125,7 +150,7 @@ public class Main {
 
     public static String inputStartDate(Scanner input) {
         String startDate;
-        boolean isValidDate = false;
+        boolean isValidDate;
 
         do {
             System.out.println("Enter start date (dd.MM.yyyy): ");
@@ -136,14 +161,14 @@ public class Main {
                 System.out.println("Invalid start date format. Please enter dd.MM.yyyy format!");
             }
         }
-        while (!isValidDate(startDate, Locale.ENGLISH));
+        while (!isValidDate);
 
         return startDate;
     }
 
     public static String inputEndDate(Scanner input, String startDate) {
         String endDate;
-        boolean isValidDate = false;
+        boolean isValidDate;
         do {
             System.out.println("Enter end date (dd.MM.yyyy): ");
             endDate = input.next();
@@ -174,22 +199,24 @@ public class Main {
 
         return mail;
     }
-public static boolean approveLeaveRecord(Scanner input){
-    System.out.println("Approve/Reject Leave: ");
-    System.out.println("1: Approve");
-    System.out.println("2: Reject");
-    String leaveStatus = input.next();
 
-    if (leaveStatus.equalsIgnoreCase("1")) {
-        return true;
-    } else if (leaveStatus.equalsIgnoreCase("2")) {
+    public static boolean approveLeaveRecord(Scanner input) {
+        System.out.println("Approve/Reject Leave: ");
+        System.out.println("1: Approve");
+        System.out.println("2: Reject");
+        String leaveStatus = input.next();
+
+        if (leaveStatus.equalsIgnoreCase("1")) {
+            return true;
+        } else if (leaveStatus.equalsIgnoreCase("2")) {
+            return false;
+        } else {
+            System.out.println("wrong choice!");
+            approveLeaveRecord(input);
+        }
         return false;
-    } else {
-        System.out.println("wrong choice!");
-        approveLeaveRecord(input);
     }
-    return false;
-}
+
     public static void changeLeaveStatus(int number, boolean leaveStatus) throws IOException {
         List<String[]> lines = new ArrayList<>();
         String line;
@@ -211,7 +238,7 @@ public static boolean approveLeaveRecord(Scanner input){
                 lines.add(getData);
             }
         }
-        if(!recordExist){
+        if (!recordExist) {
             System.out.println("Record doesnt exist!");
             return;
         }
@@ -280,43 +307,44 @@ public static boolean approveLeaveRecord(Scanner input){
                         try {
                             writeToFile(inputData);
                         } catch (IOException ex) {
-                            System.out.println(ex);
+                            ex.printStackTrace();
                         }
                         break;
                     case 2:
                         //task2
                         //Print all Leave requests;
                         try {
-                            printTable(readFromFile(readFile(fileDB)));
+                            printTable(readFileData(readFile(fileDB)));
                         } catch (IOException ex) {
-                            System.out.println(ex);
+                            ex.printStackTrace();
                         }
                         break;
                     case 3:
                         //task3
                         //Print requests by Name;
-                        System.out.printf("Enter name: ");
-                        name = input.next();
+                        System.out.print("Enter name: ");
+                        String nameSearch = input.next();
                         try {
-                            printTable(getLeaveRecordsByName(name, readFile(fileDB)));
+                            printTable(getLeaveRecordsByName(nameSearch, readFile(fileDB)));
                         } catch (IOException ex) {
+                            ex.printStackTrace();
                         }
                         break;
                     case 4:
                         //task4
                         //Change status of Leave request by ID;
                         try {
-                            printTable(readFromFile(readFile(fileDB)));
+                            printTable(readFileData(readFile(fileDB)));
                         } catch (IOException ex) {
-                            System.out.println(ex);
+                            ex.printStackTrace();
                         }
                         System.out.println("Enter number: ");
                         int num = input.nextInt();
 
                         try {
-                            changeLeaveStatus(num,approveLeaveRecord(input));
+                            changeLeaveStatus(num, approveLeaveRecord(input));
                         } catch (IOException e) {
-
+                            e.printStackTrace();
                         }
                         break;
                     case 6:
